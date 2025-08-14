@@ -67,12 +67,14 @@ The PR title should be set to one of the following bump types:
 - `#minor` to increment the `MINOR` version (default behavior)
 - `#patch` to increment the `PATCH` version (for hotfix)
 
-Once the PR is opened, a github action automatically set the title to `New Release <next-version> - <bump>`.
+Once the PR is opened, a GitHub action automatically sets the title to `New Release <next-version> - <bump>`.
 
-***NOTE: If the bump type is not set in the original title, then by default it will be set to `minor`.***
-***If any commit(s) since last release contains a bump type, then the higher bump type has precedence.***
-***For example if a previous commit contained the `#major` bump type and the `#minor` bump type is set***
-***to the New Release PR, then `#major` takes precedence.***
+Notes:
+- If the bump type is not set in the original title, then by default it will be set to `minor`.
+- If you set the bump type in the PR title but remove it manually from the extended description of the merge commit message, the bump type in the PR title won't have any effect.
+  By default, the suggested merge commit message is the title of the corresponding PR.
+- If any of the commits since the last release contains a bump type, then the highest bump type has precedence.
+  For example, if one of the commits contains a `#major` bump type but we set a `#minor` bump type in the PR title, then we end up with with a new `MAJOR` version.
 
 The PR should be reviewed by at least one person before merging.
 

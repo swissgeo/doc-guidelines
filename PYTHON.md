@@ -786,31 +786,34 @@ if __name__ == '__main__':
 
 ## 11. Dependency Management
 
-All packages used in production should be pinned to a major version. Automatically updating these packages will install the latest minor or patch version available within that major release. Development packages, on the other hand, should not be pinned unless they need to match a specific version of a production package (for example, boto3-stubs for boto3). We use Pipenv to manage packages.
+All packages used in production should be pinned to a major version. Automatically updating these packages will install the latest minor or patch version available within that major release. Development packages, on the other hand, should not be pinned unless they need to match a specific version of a production package (for example, boto3-stubs for boto3). We use [uv](https://docs.astral.sh/uv/) to manage packages.
 
 To add a package pinned to a major release, or to update a package to a new major release, run:
 
 ```bash
-pipenv install logging-utilities~=5.0
+uv add logging-utilities~=5.0
 ```
 
-Or directly modify the `Pipfile`:
+Or directly modify the `pyproject.toml`:
 
-```ini
-[packages]
-logging-utilities = "~=5.0"
+```toml
+dependencies = [
+  "logging-utilities~=5.0"
+]
 ```
 
-Note the [Pipenv version specifier](https://pipenv.pypa.io/en/latest/specifiers.html) `~=` used here, which, in this case, pins the package version to  `>=5,<6`.
+Note the [uv version specifier](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-specifiers) `~=` used here, which, in this case, pins the package version to  `>=5,<6`.
 
 To update the packages to the latest minor/compatible versions, run:
 
 ```bash
-pipenv update --dev
+uv lock --upgrade
 ```
+
+See [uv upgrading locked packages](https://docs.astral.sh/uv/concepts/projects/sync/#upgrading-locked-package-versions)
 
 To see what new major/incompatible releases are available, run:
 
 ```bash
-pipenv update --dev --outdated
+uv pip list --outdated
 ```

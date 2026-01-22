@@ -3,12 +3,15 @@
 There are a number of style guides out there. If in doubt, check what [google](http://google.github.io/styleguide/pyguide.html#doc-function-raises) proposes. We largely follow their guidelines. A few important things are reproduced here.
 
 - [1. Linting / Auto-formatting](#1-linting--auto-formatting)
-  - [Formatting with Yapf](#formatting-with-yapf)
-  - [Linting with pylint](#linting-with-pylint)
+  - [Linting configuration](#linting-configuration)
+  - [Formatting configuration](#formatting-configuration)
+    - [Import sorting](#import-sorting)
+  - [Formatting with Yapf - DEPRECATED](#formatting-with-yapf---deprecated)
+  - [Linting with pylint - DEPRECATED](#linting-with-pylint---deprecated)
     - [Ignore linting warning/refactoring/convention](#ignore-linting-warningrefactoringconvention)
-  - [Yapf and Pylint IDE Integration](#yapf-and-pylint-ide-integration)
-  - [Visual Studio Code](#visual-studio-code)
-  - [PyCharm](#pycharm)
+  - [Yapf and Pylint IDE Integration - DEPRECATED](#yapf-and-pylint-ide-integration---deprecated)
+    - [Visual Studio Code](#visual-studio-code)
+    - [PyCharm](#pycharm)
 - [2. Naming conventions](#2-naming-conventions)
 - [3. Comments and Docstrings](#3-comments-and-docstrings)
   - [Docstrings](#docstrings)
@@ -18,7 +21,7 @@ There are a number of style guides out there. If in doubt, check what [google](h
   - [Block and Inline Comments](#block-and-inline-comments)
   - [Punctuation, Spelling, and Grammar](#punctuation-spelling-and-grammar)
 - [4. TODO Comments](#4-todo-comments)
-- [5. Imports formatting](#5-imports-formatting)
+- [5. Imports formatting - DEPRECATED](#5-imports-formatting---deprecated)
   - [.isort.cfg](#isortcfg)
 - [6. Exceptions](#6-exceptions)
   - [Definition](#definition)
@@ -40,7 +43,108 @@ There are a number of style guides out there. If in doubt, check what [google](h
 
 ## 1. Linting / Auto-formatting
 
-### Formatting with Yapf
+We use [ruff](https://docs.astral.sh/ruff/) for linting (including security linting with bandit rules) and code formatting.
+
+> [!NOTE]
+> We used to use pylint, yapf and isort for linting and formating and some project might still use those tools instead of ruff.
+> Migration to ruff decision is done on a per project basis depending on the effort/benefit, which means that we still have
+> project using those older tools.
+> However all new project should use ruff instead.
+
+### Linting configuration
+
+When starting new project we should use the most restrictive rules and deactivate rules during the project development
+based on the project needs.
+
+Here below is a minimal `ruff` linting `pyproject.toml` configuration to use when starting a new project.
+
+```toml
+#------------------------------------------------------------------------------
+# Linting configuration
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "CPY",    # ignore copyright
+    "D100",   # Ignore missing docstring in module
+    "D213",   # Ignore docstring conflicting rule
+    "D203",   # Ignore docstring conflicting rule
+    "FBT001", # Ignore boolean-type-hint-positional-argument
+    "FBT002", # Ignore boolean-default-value-positional-argument
+    "PTH123", # Ignore builtin-open
+    "TD",     # Ignore flake8-todos
+    "FIX",    # ignore fixme comments
+    "COM812", # flak8-commas missing-trailing-comma is ignored to avoid conflict with formatter which enforces trailing commas
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+unfixable = []
+
+fixable = ["ALL"]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+#------------------------------------------------------------------------------
+# ruff ignore per files
+[tool.ruff.lint.per-file-ignores]
+
+"tests/**" = [
+    "S101",   # Ignore usage of assert statements in tests
+    "INP001", # Ignore implicit namespace packages in tests
+]
+
+```
+
+To run linting do
+
+```bash
+ruff check
+```
+
+Or with auto fix
+
+```bash
+ruff check --fix
+```
+
+### Formatting configuration
+
+Here below is our formatting ruff configuration in `pyproject.toml` that we use
+
+```toml
+#------------------------------------------------------------------------------
+# Formatting configuration
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+```
+
+To run the formatting do
+
+```bash
+ruff format
+```
+
+#### Import sorting
+
+Import sorting is done by ruff, but currently `ruff format` don't support it and we have to do it
+via `ruff check` linter as follow:
+
+```bash
+ruff check --select I --fix
+```
+
+### Formatting with Yapf - DEPRECATED
+
+> [!warning] DEPRECATED - use ruff instead
 
 Most of the current formatters for Python --- e.g., autopep8, and pep8ify --- are made to remove lint errors from code. This has some obvious limitations. For instance, code that conforms to the PEP 8 guidelines may not be reformatted. But it doesn't mean that the code looks good.
 
@@ -86,7 +190,9 @@ split_all_top_level_comma_separated_values=True
 column_limit=100
 ```
 
-### Linting with pylint
+### Linting with pylint - DEPRECATED
+
+> [!warning] DEPRECATED - use ruff instead
 
 Although formatting is good, it doesn't check for syntax errors nor for non pythonic idioms or bad code practice.
 Therefore we also use a linter. There are several linter on the market (pylint, flake8, bandit, ...), we use
@@ -130,9 +236,11 @@ def test(self):
 For more detail in ignoring pylint issues see
 [Pylint Messages Control](http://pylint.pycqa.org/en/stable/user_guide/message-control.html)
 
-### Yapf and Pylint IDE Integration
+### Yapf and Pylint IDE Integration - DEPRECATED
 
-### Visual Studio Code
+> [!warning] DEPRECATED - use ruff instead
+
+#### Visual Studio Code
 
 To integrate `yapf` and `pylint` into Visual Studio Code simply add the following settings into the user or workspace
 settings:
@@ -155,7 +263,7 @@ settings:
 }
 ```
 
-### PyCharm
+#### PyCharm
 
 [How to setup](https://www.jetbrains.com/help/pycharm/configuring-third-party-tools.html)
 
@@ -335,7 +443,7 @@ The purpose is to have a consistent `TODO` format that can be searched to find o
 
 If your `TODO` is of the form "At a future date do something" make sure that you either include a very specific date ("Fix by November 2009") or a very specific event ("Remove this code when all clients can handle XML responses.").
 
-## 5. Imports formatting
+## 5. Imports formatting - DEPRECATED
 
 Imports should be on separate lines.
 
@@ -786,31 +894,34 @@ if __name__ == '__main__':
 
 ## 11. Dependency Management
 
-All packages used in production should be pinned to a major version. Automatically updating these packages will install the latest minor or patch version available within that major release. Development packages, on the other hand, should not be pinned unless they need to match a specific version of a production package (for example, boto3-stubs for boto3). We use Pipenv to manage packages.
+All packages used in production should be pinned to a major version. Automatically updating these packages will install the latest minor or patch version available within that major release. Development packages, on the other hand, should not be pinned unless they need to match a specific version of a production package (for example, boto3-stubs for boto3). We use [uv](https://docs.astral.sh/uv/) to manage packages.
 
 To add a package pinned to a major release, or to update a package to a new major release, run:
 
 ```bash
-pipenv install logging-utilities~=5.0
+uv add logging-utilities~=5.0
 ```
 
-Or directly modify the `Pipfile`:
+Or directly modify the `pyproject.toml`:
 
-```ini
-[packages]
-logging-utilities = "~=5.0"
+```toml
+dependencies = [
+  "logging-utilities~=5.0"
+]
 ```
 
-Note the [Pipenv version specifier](https://pipenv.pypa.io/en/latest/specifiers.html) `~=` used here, which, in this case, pins the package version to  `>=5,<6`.
+Note the [uv version specifier](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-specifiers) `~=` used here, which, in this case, pins the package version to  `>=5,<6`.
 
 To update the packages to the latest minor/compatible versions, run:
 
 ```bash
-pipenv update --dev
+uv lock --upgrade
 ```
+
+See [uv upgrading locked packages](https://docs.astral.sh/uv/concepts/projects/sync/#upgrading-locked-package-versions)
 
 To see what new major/incompatible releases are available, run:
 
 ```bash
-pipenv update --dev --outdated
+uv pip list --outdated
 ```

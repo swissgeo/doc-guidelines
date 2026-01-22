@@ -68,6 +68,9 @@ ignore = [
     "D100",   # Ignore missing docstring in module
     "D213",   # Ignore docstring conflicting rule
     "D203",   # Ignore docstring conflicting rule
+    "FBT001", # Ignore boolean-type-hint-positional-argument
+    "FBT002", # Ignore boolean-default-value-positional-argument
+    "PTH123", # Ignore builtin-open
     "TD",     # Ignore flake8-todos
     "FIX",    # ignore fixme comments
     "COM812", # flak8-commas missing-trailing-comma is ignored to avoid conflict with formatter which enforces trailing commas

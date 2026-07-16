@@ -1,6 +1,6 @@
 # GITHUB
 
-All github repository of the geoadmin organization are managed by terraform and all settings as well as user management MUST BE done only using terraform !
+All github repository of the SWISSGEO organization are managed by terraform and all settings as well as user management MUST BE done only using terraform !
 
 ## Table of content
 

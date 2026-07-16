@@ -1,6 +1,6 @@
 # doc-guidelines
 
-Geoadmin PP BGDI general and coding guidelines.
+SWISSGEO general and coding guidelines.
 
 ## Table of Content
 

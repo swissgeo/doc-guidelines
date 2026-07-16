@@ -5,21 +5,21 @@ the `go.mod` file](https://go.dev/doc/modules/gomod-ref#go).
 
 For example:
 
-```
+```bash
 go 1.24.4
 ```
 
 You can programmatically retrieve that version number with `goenv`:
-```
+
+```bash
 GOENV_GOMOD_VERSION_ENABLE=1 goenv local
 ```
 
 ## Implementation details
 
 If you are interested in the details of how the CI handles this, please refer
-to [`golang_install.sh`](https://github.com/geoadmin/infra-terraform-bgdi/blob/master/scripts/codebuild/golang_install.sh)
+to [`golang_install.sh`](https://github.com/swissgeo/infra-terraform/blob/main/scripts/codebuild/golang_install.sh)
 and the [`goenv`](https://github.com/go-nv/goenv) documentation.
-
 
 It should be possible to override the Go version specified in `go.md` with a
 `.go-version` file. This is discouraged as different tools may then have

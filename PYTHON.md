@@ -6,12 +6,6 @@ There are a number of style guides out there. If in doubt, check what [google](h
   - [Linting configuration](#linting-configuration)
   - [Formatting configuration](#formatting-configuration)
     - [Import sorting](#import-sorting)
-  - [Formatting with Yapf - DEPRECATED](#formatting-with-yapf---deprecated)
-  - [Linting with pylint - DEPRECATED](#linting-with-pylint---deprecated)
-    - [Ignore linting warning/refactoring/convention](#ignore-linting-warningrefactoringconvention)
-  - [Yapf and Pylint IDE Integration - DEPRECATED](#yapf-and-pylint-ide-integration---deprecated)
-    - [Visual Studio Code](#visual-studio-code)
-    - [PyCharm](#pycharm)
 - [2. Naming conventions](#2-naming-conventions)
 - [3. Comments and Docstrings](#3-comments-and-docstrings)
   - [Docstrings](#docstrings)
@@ -21,35 +15,28 @@ There are a number of style guides out there. If in doubt, check what [google](h
   - [Block and Inline Comments](#block-and-inline-comments)
   - [Punctuation, Spelling, and Grammar](#punctuation-spelling-and-grammar)
 - [4. TODO Comments](#4-todo-comments)
-- [5. Imports formatting - DEPRECATED](#5-imports-formatting---deprecated)
-  - [.isort.cfg](#isortcfg)
-- [6. Exceptions](#6-exceptions)
+- [5. Exceptions](#5-exceptions)
   - [Definition](#definition)
   - [Pros](#pros)
   - [Cons](#cons)
   - [Decision](#decision)
-- [7. Error handling - Rules of Thumb](#7-error-handling---rules-of-thumb)
-- [8. Introduce Explaining Variable](#8-introduce-explaining-variable)
-- [9. Unit Testing frameworks](#9-unit-testing-frameworks)
-- [10. Logging](#10-logging)
+- [6. Error handling - Rules of Thumb](#6-error-handling---rules-of-thumb)
+- [7. Introduce Explaining Variable](#7-introduce-explaining-variable)
+- [8. Unit Testing frameworks](#8-unit-testing-frameworks)
+- [9. Observablity - Logging](#9-observablity---logging)
   - [Logger](#logger)
+  - [OTEL LoggerProvider](#otel-loggerprovider)
   - [Configuration](#configuration)
-    - [Flask logging configuration](#flask-logging-configuration)
-    - [Django logging configuration](#django-logging-configuration)
-    - [Gunicorn logging configuration](#gunicorn-logging-configuration)
-- [11. Dependency Management](#11-dependency-management)
+- [10. Observability - Tracing](#10-observability---tracing)
+- [11. Observability - Metrics](#11-observability---metrics)
+- [12. Observability - local stack](#12-observability---local-stack)
+- [13. Dependency Management](#13-dependency-management)
 
 **The foremost goal is that reading and understanding your python code is easy for someone else (or yourself in a few months time).**
 
 ## 1. Linting / Auto-formatting
 
 We use [ruff](https://docs.astral.sh/ruff/) for linting (including security linting with bandit rules) and code formatting.
-
-> [!NOTE]
-> We used to use pylint, yapf and isort for linting and formating and some project might still use those tools instead of ruff.
-> Migration to ruff decision is done on a per project basis depending on the effort/benefit, which means that we still have
-> project using those older tools.
-> However all new project should use ruff instead.
 
 ### Linting configuration
 
@@ -142,131 +129,6 @@ via `ruff check` linter as follow:
 ruff check --select I --fix
 ```
 
-### Formatting with Yapf - DEPRECATED
-
-> [!warning] DEPRECATED - use ruff instead
-
-Most of the current formatters for Python --- e.g., autopep8, and pep8ify --- are made to remove lint errors from code. This has some obvious limitations. For instance, code that conforms to the PEP 8 guidelines may not be reformatted. But it doesn't mean that the code looks good.
-
-[YAPF](https://github.com/google/yapf/) takes a different approach. In essence, the algorithm takes the code and reformats it to the best formatting that conforms to the style guide, even if the original code didn't violate the style guide: end all holy wars about formatting - if the whole codebase of a project is simply piped through YAPF whenever modifications are made, the style remains consistent throughout the project and there's no point arguing about style in every code review.
-
-The ultimate goal is that the code YAPF produces is as good as the code that a programmer would write if they were following the style guide. It takes away some of the drudgery of maintaining your code.
-
-We use the `google` style with a few small modifications. Simply copy-paste this to the root of every new project.
-
-```ini
-[style]
-based_on_style=google
-# Put closing brackets on a separate line, dedent, if the bracketed
-# expression can't fit in a single line. Applies to all kinds of brackets,
-# including function definitions and calls. For example:
-#
-#   config = {
-#       'key1': 'value1',
-#       'key2': 'value2',
-#   }        # <--- this bracket is dedent and on a separate line
-#
-#   time_series = self.remote_client.query_entity_counters(
-#       entity='dev3246.region1',
-#       key='dns.query_latency_tcp',
-#       transform=Transformation.AVERAGE(window=timedelta(seconds=60)),
-#       start_ts=now()-timedelta(days=3),
-#       end_ts=now(),
-#   )        # <--- this bracket is dedent and on a separate line
-dedent_closing_brackets=True
-coalesce_brackets=True
-
-# This avoid issues with complex dictionary
-# see https://github.com/google/yapf/issues/392#issuecomment-407958737
-indent_dictionary_value=True
-allow_split_before_dict_value=False
-
-# Split before arguments, but do not split all sub expressions recursively
-# (unless needed).
-split_all_top_level_comma_separated_values=True
-
-# Split lines longer than 100 characters (this only applies to code not to
-# comment and docstring)
-column_limit=100
-```
-
-### Linting with pylint - DEPRECATED
-
-> [!warning] DEPRECATED - use ruff instead
-
-Although formatting is good, it doesn't check for syntax errors nor for non pythonic idioms or bad code practice.
-Therefore we also use a linter. There are several linter on the market (pylint, flake8, bandit, ...), we use
-[pylint](http://pylint.pycqa.org/en/stable/) because it cover most of the errors and also has the advantage to be able
-to disable rules by alias instead of by code (e.g. `# pylint: disable=unused-import` instead of `# noqa: F401` for flake8).
-
-We use the following `pylint` configuration: [.pylintrc](assets/.pylintrc)
-
-#### Ignore linting warning/refactoring/convention
-
-There might be good reason to disable locally some linting messages. When doing this, the reason why we disable a rule
-should be documented next to the disable pragma. Disable pragma can be entered as following:
-
-- single line
-
-```python
-a, b = ... # pylint: disable=unbalanced-tuple-unpacking
-```
-
-- single scope
-
-```python
-def test():
-    # Disable all the no-member violations in this function
-    # pylint: disable=no-member
-    ...
-```
-
-- block
-
-```python
-def test(self):
-    ...
-    if self.bla:
-        # Disable all line-too-long in this if block
-        # pylint: disable=line-too-long
-        print('This block contain very very long lines that we explicitly don\'t want to split into several lines to match the 100 characters max line length rule')
-    ...
-```
-
-For more detail in ignoring pylint issues see
-[Pylint Messages Control](http://pylint.pycqa.org/en/stable/user_guide/message-control.html)
-
-### Yapf and Pylint IDE Integration - DEPRECATED
-
-> [!warning] DEPRECATED - use ruff instead
-
-#### Visual Studio Code
-
-To integrate `yapf` and `pylint` into Visual Studio Code simply add the following settings into the user or workspace
-settings:
-
-```json
-{
-  "editor.formatOnSave": true,
-  "files.trimTrailingWhitespace": true,
-  "files.autoSave": "onFocusChange",
-  "python.pythonPath": ".venv/bin/python",
-  "python.formatting.provider": "yapf",
-  "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.ignorePatterns": [
-    ".vscode/*.py",
-    "**/site-packages/**/*.py",
-    ".venv",
-    "build"
-  ]
-}
-```
-
-#### PyCharm
-
-[How to setup](https://www.jetbrains.com/help/pycharm/configuring-third-party-tools.html)
-
 ## 2. Naming conventions
 
 Python code must follow these naming conventions:
@@ -279,7 +141,7 @@ Python code must follow these naming conventions:
 - class: PascalCase
 - attribute: snake_case
 
-These naming conventions are checked by `pylint` (see `*-naming-style` keys in [pylintrc](assets/.pylintrc#L222))
+These naming conventions are checked by `ruff`.
 
 ## 3. Comments and Docstrings
 
@@ -290,8 +152,6 @@ Be sure to use the right style for module, function, method docstrings and inlin
 Python uses docstrings to document code. A docstring is a string that is the first statement in a package, module, class or function. These strings can be extracted automatically through the __doc__ member of the object and are used by pydoc. (Try running pydoc on your module to see how it looks.) Always use the three double-quote `"""` format for docstrings (per PEP 257). A docstring should be organized as a summary line (one physical line) terminated by a period, question mark, or exclamation point, followed by a blank line, followed by the rest of the docstring starting at the same cursor position as the first quote of the first line. There are more formatting guidelines for docstrings below.
 
 ### Modules
-
-Every file should contain license boilerplate. Choose the appropriate boilerplate for the license used by the project (for example, Apache 2.0, BSD, LGPL, GPL)
 
 Files should start with a docstring describing the contents and usage of the module.
 
@@ -443,97 +303,7 @@ The purpose is to have a consistent `TODO` format that can be searched to find o
 
 If your `TODO` is of the form "At a future date do something" make sure that you either include a very specific date ("Fix by November 2009") or a very specific event ("Remove this code when all clients can handle XML responses.").
 
-## 5. Imports formatting - DEPRECATED
-
-Imports should be on separate lines.
-
-E.g.:
-
-```python
-Yes: import os
-     import sys
-
-No:  import os, sys
-```
-
-Imports are always put at the top of the file, just after any module comments and docstrings and before module globals and constants. Imports should be grouped from most generic to least generic:
-
-1. Python standard library imports. For example:
-
-    ```python
-    import sys
-    ```
-
-1. third-party module or package imports. For example:
-
-    ```python
-    import tensorflow as tf
-    ```
-
-1. Code repository sub-package imports. For example:
-
-    ```python
-    from otherproject.ai import mind
-    ```
-
-1. application-specific imports that are part of the same top level sub-package as this file. For example:
-
-    ```python
-    from myproject.backend.hgwells import time_machine
-    ```
-
-Within each grouping, imports should be sorted lexicographically, ignoring case, according to each module’s full package path. Code may optionally place a blank line between import sections.
-
-```python
-import collections
-import queue
-import sys
-
-from absl import app
-from absl import flags
-import bs4
-import cryptography
-import tensorflow as tf
-
-from book.genres import scifi
-from otherproject.ai import body
-from otherproject.ai import mind
-from otherproject.ai import soul
-
-from myproject.backend.hgwells import time_machine
-from myproject.backend.state_machine import main_loop
-```
-
-[`isort`](https://timothycrosley.github.io/isort/) does the job of grouping and sorting your imports alphabetically and according to your configuration. If you have packages that you want to have treated as thirdparty, add them to `known_third_party`. If you wanna specially group imports from e.g. a framework, you can create a custom `known_acme` and add `ACME` to the `sections`
-
-### .isort.cfg
-
-```ini
-[settings]
-known_third_party=pytest
-known_django=django
-known_flask=flask
-force_single_line=True
-sections=FUTURE,STDLIB,THIRDPARTY,DJANGO,FLASK,FIRSTPARTY,LOCALFOLDER
-
-# other possible options
-# line_length=80
-# force_to_top=file1.py,file2.py
-# skip=file3.py,file4.py
-# known_future_library=future,pies
-# known_standard_library=std,std2
-# known_third_party=randomthirdparty
-# known_first_party=mylib1,mylib2
-# indent='    '
-# multi_line_output=0  # 0 is default
-# length_sort=1
-# forced_separate=django.contrib,django.utils
-# default_section=FIRSTPARTY
-# no_lines_before=LOCALFOLDER
-
-```
-
-## 6. Exceptions
+## 5. Exceptions
 
 Exceptions are allowed but must be used carefully.
 
@@ -689,7 +459,7 @@ Exceptions must follow certain conditions:
 
   For more information about `raise ... from ...` form see [Raise … from … in Python](https://stefan.sofa-rockers.org/2020/10/28/raise-from/)
 
-## 7. Error handling - Rules of Thumb
+## 6. Error handling - Rules of Thumb
 
 - Only handle known _Exceptions_ -> **NO BROAD EXCEPTION !**
 
@@ -755,7 +525,7 @@ Exceptions must follow certain conditions:
 
 - Let crash the application with unexpected _Exceptions_ rather sooner than later
 
-## 8. Introduce Explaining Variable
+## 7. Introduce Explaining Variable
 
 This will help to explain the meaning of each variable when expressions are hard to read.
 
@@ -776,7 +546,7 @@ if (is_mac_os and is_IEBrowser and was_initialized() and was_resized):
     # do something
 ```
 
-## 9. Unit Testing frameworks
+## 8. Unit Testing frameworks
 
 Python comes with a fairly mature unit testing framework [`unittest`](https://docs.python.org/3/library/unittest.html) that should be used. There are a number of different test runners available:
 
@@ -784,11 +554,13 @@ Python comes with a fairly mature unit testing framework [`unittest`](https://do
 - pytest
 - various test runners included in frameworks
 
-In any case, the tests should be based on `unittest`.
+Tests should be based on `unittest` and every project should prefer using `pytest` as runner.
 
-## 10. Logging
+## 9. Observablity - Logging
 
-Python comes with a good logging framework that we should use for logging. Unfortunately this framework lack for good JSON formatting which is the best logging format when working with ELK (Elasticsearch-Logstash-Kibana). Therefore we use the [`logging-utilities`](https://pypi.org/project/logging-utilities/) library for JSON support, Flask Request extension and ISO time.
+Python comes with a good logging framework that we should use for logging. For development all log messages should be printed to stdout in a human-readable format.
+
+For deployment all log messages should be sent to the Opentelementry collector directly using the [`opentelemetry-python`](https://github.com/open-telemetry/opentelemetry-python) libraries.
 
 ### Logger
 
@@ -806,9 +578,34 @@ logger.info('This is my module logger')
 
 **NOTE:** don't reuse the Flask app logger.
 
+### OTEL LoggerProvider
+
+Together with the standard Python logging sending human readable message to stdout, we must use the 
+OTEL `LoggerProvider` to send logs directly to the OTEL collector.
+
+```python
+import logging
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogRecordExporter # ConsoleLogExporter on versions earlier than 1.39.0
+from opentelemetry._logs import set_logger_provider
+
+provider = LoggerProvider()
+processor = BatchLogRecordProcessor(ConsoleLogRecordExporter())
+provider.add_log_record_processor(processor)
+# Sets the global default logger provider
+set_logger_provider(provider)
+
+handler = LoggingHandler(level=logging.INFO, logger_provider=provider)
+logging.basicConfig(handlers=[handler], level=logging.INFO)
+
+logging.getLogger(__name__).info("This is an OpenTelemetry log record!")
+```
+
+See [OTEL Python Instrumentation Logs](https://opentelemetry.io/docs/languages/python/instrumentation/#logs)
+
 ### Configuration
 
-Logging should be configured via a yaml file as follow:
+Logging should be configured via a yaml file for local development as follow:
 
 ```python
 import logging
@@ -836,63 +633,29 @@ def init_logging():
     logging.config.dictConfig(config)
 ```
 
-Each application should use the following configurations depending on the environment:
+Then on the deployment it could use the same configuration to send human readable logs on stdout.
 
-- [logging-cfg-local.yml](assets/logging-cfg-local.yaml) (local development)
-- [logging-cfg-flask-dev.yml](assets/logging-cfg-flask-dev.yaml)
-- [logging-cfg-flask-prod.yml](assets/logging-cfg-flask-prod.yaml)
-- [logging-cfg-django-dev.yml](assets/logging-cfg-django-dev.yaml)
-- [logging-cfg-django-prod.yml](assets/logging-cfg-django-prod.yaml)
+> [!IMPORTANT]
+> On deployment stdout is ignored by the Observability stack, and each python service MUST use the OTEL Logger provider, see above [OTEL LoggerProvider](#otel-loggerprovider).
 
-#### Flask logging configuration
+## 10. Observability - Tracing
 
-When serving flask directly (e.g. `make serve`) we need to configure logging by calling the `init_logging()` method insid the `service_launcher.py` file (see [geoadmin/template-service-flask/service_launcher.py](https://github.com/geoadmin/template-service-flask/blob/master/service_launcher.py))
+Every service should implement OTEL Tracing, see [Opentelemetry Tracing](https://opentelemetry.io/docs/languages/python/instrumentation/#traces).
 
-#### Django logging configuration
+## 11. Observability - Metrics
 
-When serving Django directly (e.g. `make serve` without WSGI server), we need to set the logging configuration in `project/settings.py` as follow:
+Opentelementry instrumentation usually allready implement most important metrics. However if the service
+require other metrics, they should be implemented with [Opentelementry Metrics](https://opentelemetry.io/docs/languages/python/instrumentation/#metrics). Any new metrics must follow the OTEL [semantic convention](https://opentelemetry.io/docs/specs/semconv/).
 
-```python
-# Logging
-# https://docs.djangoproject.com/en/3.1/topics/logging/
+## 12. Observability - local stack
 
+For local development, every service should use the following docker containers:
 
-# Read configuration from file
-def get_logging_config():
-    '''Read logging configuration
+- otel/opentelemetry-collector-contrib => OTEL collector
+- jaegertracing/all-in-one => trace analyzer
+- prom/prometheus => metrics receiver and analyzer
 
-    Read and parse the yaml logging configuration file passed in the environment variable
-    LOGGING_CFG and return it as dictionary
-    '''
-    log_config = {}
-    with open(os.getenv('LOGGING_CFG', 'logging-cfg-local.yml'), 'rt') as fd:
-        log_config = yaml.safe_load(fd.read())
-    return log_config
-
-
-LOGGING = get_logging_config()
-```
-
-#### Gunicorn logging configuration
-
-To configure gunicorn logging you need to set the `logconfig_dict` config with the output of `get_logging_cfg()`
-
-```python
-# We use the port 5000 as default, otherwise we set the HTTP_PORT env variable within the container.
-if __name__ == '__main__':
-    HTTP_PORT = str(os.environ.get('HTTP_PORT', "5000"))
-    # Bind to 0.0.0.0 to let your app listen to all network interfaces.
-    options = {
-        'bind': '%s:%s' % ('0.0.0.0', HTTP_PORT),
-        'worker_class': 'gevent',
-        'workers': 2,  # scaling horizontally is left to Kubernetes
-        'timeout': 60,
-        'logconfig_dict': get_logging_config()
-    }
-    StandaloneApplication(application, options).run()
-```
-
-## 11. Dependency Management
+## 13. Dependency Management
 
 All packages used in production should be pinned to a major version. Automatically updating these packages will install the latest minor or patch version available within that major release. Development packages, on the other hand, should not be pinned unless they need to match a specific version of a production package (for example, boto3-stubs for boto3). We use [uv](https://docs.astral.sh/uv/) to manage packages.
 

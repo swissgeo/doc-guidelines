@@ -8,15 +8,18 @@ The following topics are covered:
 - [2. Coding style](#2-coding-style)
   - [Fail-Fast](#fail-fast)
   - [Environments](#environments)
-- [Logs](#logs)
+- [Observability](#observability)
+  - [Logging](#logging)
+  - [Tracing](#tracing)
+  - [Metrics](#metrics)
 - [3. Testing](#3-testing)
   - [Unit Tests](#unit-tests)
-  - [Integration Tests](#integration-tests)
+  - [Integration/End-to-End Tests](#integrationend-to-end-tests)
   - [Manual Tests](#manual-tests)
 
 ## 1. Version Control of Sources
 
-`git` is used as version control system of source code. Git repositories are hosted on [github.com](github.com). All sorts of code, scripts (bash, SQL, ...) and documentation should be tracked.
+`git` is used as the version control system of source code. Git repositories are hosted on [github.com](github.com). All sorts of code, scripts (bash, SQL, ...) and documentation should be tracked.
 
 **IMPORTANT:** read [Git Flow](GIT_FLOW.md) to learn about the `git` and `PR` workflow.
 
@@ -26,9 +29,7 @@ The following topics are covered:
 
 ## 2. Coding style
 
-Some guidelines that are generic to all languages are noted here. Language specific things can be found here:
-
-[Coding Guidelines](README.md#coding-guidelines)
+Some guidelines that are generic to all languages are noted here. Language specific things can be found in this page, see below. Language specific guidelines can be found here [Coding Guidelines](README.md)
 
 > [!NOTE]
 > Keep in mind that most of the time is spent **reading** code (not writing), yours or from someone else. Hence try to make life easier for the one **reading** and trying to understand your code.
@@ -47,7 +48,7 @@ Some guidelines that are generic to all languages are noted here. Language speci
 
 ### Environments
 
-Three environments are available
+Three environments are available:
 
 - *dev*: the development environment is mainly used to test and develop things that either need access to hardware other than the notebook provides or for interface development, where the component under development must be accessible by other systems. Whenever development needs other resources, it should be *dev* resources.
 - *int*: the integration or staging environment is used to verify that production-ready changes to a component work as expected together with other resources (in terms of functionality, performance, ...)
@@ -61,19 +62,19 @@ For observability, each service should use OpenTelemetry logging, tracing and me
 
 ### Logging
 
-Each service must write logs using different log levels. The logs should be by default written in `stdout` in a human readable format. Then whenever possible we should use in parallel OpenTelemetry log exporter that sends directly log in correct OTEL format to the OTEL log collector. Logs are finally centralized in the Elasticsearch/Kibana observability infrastructure.
+Each service must write logs using different log levels. The logs should be written to `stdout` by default in a human readable format. Then, whenever possible, we should also use an OpenTelemetry log exporter in parallel that sends the log directly in the correct OTEL format to the OTEL log collector. Logs are finally centralized in the Elasticsearch/Kibana observability infrastructure.
 
 ### Tracing
 
-Each service should use OpenTelemetry tracing to trace the execution of its requests. Traces are sent to the OTEL collector and are finally visualized in the Kibana observability infrastructure. For local development, traces should be sent to a local `otel/opentelemetry-collector-contrib` docker container and visualized in a local Jeager docker container.
+Each service should use OpenTelemetry tracing to trace the execution of its requests. Traces are sent to the OTEL collector and are finally visualized in the Kibana observability infrastructure. For local development, traces should be sent to a local `otel/opentelemetry-collector-contrib` docker container and visualized in a local Jaeger docker container.
 
 ### Metrics
 
-Each service should use OpenTelemetry metrics to collect and report metrics about its execution (mostly done by opentelementry instrumentation libraries). Metrics are sent to the OTEL collector and are finally visualized in the Kibana observability infrastructure. For local development, metrics should be sent to a local Prometheus docker container which also provides a simple web UI for visualizing metrics.
+Each service should use OpenTelemetry metrics to collect and report metrics about its execution (mostly done by opentelemetry instrumentation libraries). Metrics are sent to the OTEL collector and are finally visualized in the Kibana observability infrastructure. For local development, metrics should be sent to a local Prometheus docker container which also provides a simple web UI for visualizing metrics.
 
 ## 3. Testing
 
-Testing is an integral part of development and mandatory for production targeted code. This applies to apps as well as scripts. We distinguish three categories of tests:
+Testing is an integral part of development and mandatory for production-targeted code. This applies to apps as well as scripts. We distinguish three categories of tests:
 
 - unit tests
 - integration/end-to-end tests
@@ -81,7 +82,7 @@ Testing is an integral part of development and mandatory for production targeted
 
 The first two are automated tests, the third one obviously manual. Language specific details about testing can be found here:
 
-- [python](PYTHON.md#9-unit-testing-frameworks)
+- [python](PYTHON.md#8-unit-testing-frameworks)
 - [bash](BASH.md#4-unit-tests--shellspec)
 - [javascript](JAVASCRIPT.md#testing)
 
@@ -91,7 +92,7 @@ Unit Tests can be performed before a docker image is built using a dedicated tes
 
 ### Integration/End-to-End Tests
 
-Integration/End-to-End tests are performed with the built docker image and have access to external resources. Integration test should make sure that the newly built version works well together with the existing data and other services. Integration tests should use staging (or integration) environment and not production resources.
+Integration/End-to-End tests are performed with the built docker image and have access to external resources. Integration tests should make sure that the newly built version works well together with the existing data and other services. Integration tests should use staging (or integration) environment and not production resources.
 
 ### Manual Tests
 

@@ -6,31 +6,32 @@ There are a number of style guides out there. If in doubt, check what [google](h
   - [Linting configuration](#linting-configuration)
   - [Formatting configuration](#formatting-configuration)
     - [Import sorting](#import-sorting)
-- [2. Naming conventions](#2-naming-conventions)
-- [3. Comments and Docstrings](#3-comments-and-docstrings)
+- [2. Type hints](#2-type-hints)
+- [3. Naming conventions](#3-naming-conventions)
+- [4. Comments and Docstrings](#4-comments-and-docstrings)
   - [Docstrings](#docstrings)
   - [Modules](#modules)
   - [Functions and Methods](#functions-and-methods)
   - [Classes](#classes)
   - [Block and Inline Comments](#block-and-inline-comments)
   - [Punctuation, Spelling, and Grammar](#punctuation-spelling-and-grammar)
-- [4. TODO Comments](#4-todo-comments)
-- [5. Exceptions](#5-exceptions)
+- [5. TODO Comments](#5-todo-comments)
+- [6. Exceptions](#6-exceptions)
   - [Definition](#definition)
   - [Pros](#pros)
   - [Cons](#cons)
   - [Decision](#decision)
-- [6. Error handling - Rules of Thumb](#6-error-handling---rules-of-thumb)
-- [7. Introduce Explaining Variable](#7-introduce-explaining-variable)
-- [8. Unit Testing frameworks](#8-unit-testing-frameworks)
-- [9. Observablity - Logging](#9-observablity---logging)
+- [7. Error handling - Rules of Thumb](#7-error-handling---rules-of-thumb)
+- [8. Introduce Explaining Variable](#8-introduce-explaining-variable)
+- [9. Unit Testing frameworks](#9-unit-testing-frameworks)
+- [10. Observablity - Logging](#10-observablity---logging)
   - [Logger](#logger)
   - [OTEL LoggerProvider](#otel-loggerprovider)
   - [Configuration](#configuration)
-- [10. Observability - Tracing](#10-observability---tracing)
-- [11. Observability - Metrics](#11-observability---metrics)
-- [12. Observability - local stack](#12-observability---local-stack)
-- [13. Dependency Management](#13-dependency-management)
+- [11. Observability - Tracing](#11-observability---tracing)
+- [12. Observability - Metrics](#12-observability---metrics)
+- [13. Observability - local stack](#13-observability---local-stack)
+- [14. Dependency Management](#14-dependency-management)
 
 **The foremost goal is that reading and understanding your python code is easy for someone else (or yourself in a few months time).**
 
@@ -129,7 +130,13 @@ via `ruff check` linter as follow:
 ruff check --select I --fix
 ```
 
-## 2. Naming conventions
+## 2. Type hints
+
+Python code must use type hints for function arguments and return values. Type hints help code reader to understand the code and can catch type errors before runtime.
+
+Type hints are checked and enforced by `ty`, see [ty](https://docs.astral.sh/ty/).
+
+## 3. Naming conventions
 
 Python code must follow these naming conventions:
 
@@ -143,7 +150,7 @@ Python code must follow these naming conventions:
 
 These naming conventions are checked by `ruff`.
 
-## 3. Comments and Docstrings
+## 4. Comments and Docstrings
 
 Be sure to use the right style for module, function, method docstrings and inline comments.
 
@@ -288,7 +295,7 @@ Comments should be as readable as narrative text, with proper capitalization and
 
 Although it can be frustrating to have a code reviewer point out that you are using a comma when you should be using a semicolon, it is very important that source code maintain a high level of clarity and readability. Proper punctuation, spelling, and grammar help with that goal.
 
-## 4. TODO Comments
+## 5. TODO Comments
 
 Use `TODO` comments for code that is temporary, a short-term solution, or good-enough but not perfect.
 
@@ -303,7 +310,7 @@ The purpose is to have a consistent `TODO` format that can be searched to find o
 
 If your `TODO` is of the form "At a future date do something" make sure that you either include a very specific date ("Fix by November 2009") or a very specific event ("Remove this code when all clients can handle XML responses.").
 
-## 5. Exceptions
+## 6. Exceptions
 
 Exceptions are allowed but must be used carefully.
 
@@ -459,7 +466,7 @@ Exceptions must follow certain conditions:
 
   For more information about `raise ... from ...` form see [Raise … from … in Python](https://stefan.sofa-rockers.org/2020/10/28/raise-from/)
 
-## 6. Error handling - Rules of Thumb
+## 7. Error handling - Rules of Thumb
 
 - Only handle known _Exceptions_ -> **NO BROAD EXCEPTION !**
 
@@ -525,7 +532,7 @@ Exceptions must follow certain conditions:
 
 - Let crash the application with unexpected _Exceptions_ rather sooner than later
 
-## 7. Introduce Explaining Variable
+## 8. Introduce Explaining Variable
 
 This will help to explain the meaning of each variable when expressions are hard to read.
 
@@ -546,7 +553,7 @@ if (is_mac_os and is_IEBrowser and was_initialized() and was_resized):
     # do something
 ```
 
-## 8. Unit Testing frameworks
+## 9. Unit Testing frameworks
 
 Python comes with a fairly mature unit testing framework [`unittest`](https://docs.python.org/3/library/unittest.html). However the standard `unittest` framework is limited in features.
 
@@ -558,7 +565,7 @@ Pytests comes with the following features that should be used:
   - Markers: categorize tests by feature or priority
   - Parametrization: run the same test with different inputs
 
-## 9. Observablity - Logging
+## 10. Observablity - Logging
 
 Python comes with a good logging framework that we should use for logging. For development all log messages should be printed to stdout in a human-readable format.
 
@@ -640,16 +647,16 @@ Then on the deployment it could use the same configuration to send human readabl
 > [!IMPORTANT]
 > On deployment stdout is ignored by the Observability stack, and each python service MUST use the OTEL Logger provider, see above [OTEL LoggerProvider](#otel-loggerprovider).
 
-## 10. Observability - Tracing
+## 11. Observability - Tracing
 
 Every service should implement OTEL Tracing, see [Opentelemetry Tracing](https://opentelemetry.io/docs/languages/python/instrumentation/#traces).
 
-## 11. Observability - Metrics
+## 12. Observability - Metrics
 
 Opentelementry instrumentation usually allready implement most important metrics. However if the service
 require other metrics, they should be implemented with [Opentelementry Metrics](https://opentelemetry.io/docs/languages/python/instrumentation/#metrics). Any new metrics must follow the OTEL [semantic convention](https://opentelemetry.io/docs/specs/semconv/).
 
-## 12. Observability - local stack
+## 13. Observability - local stack
 
 For local development, every service should use the following docker containers:
 
@@ -657,7 +664,7 @@ For local development, every service should use the following docker containers:
 - jaegertracing/all-in-one => trace analyzer
 - prom/prometheus => metrics receiver and analyzer
 
-## 13. Dependency Management
+## 14. Dependency Management
 
 All packages used in production should be pinned to a major version. Automatically updating these packages will install the latest minor or patch version available within that major release. Development packages, on the other hand, should not be pinned unless they need to match a specific version of a production package (for example, boto3-stubs for boto3). We use [uv](https://docs.astral.sh/uv/) to manage packages.
 

@@ -548,13 +548,15 @@ if (is_mac_os and is_IEBrowser and was_initialized() and was_resized):
 
 ## 8. Unit Testing frameworks
 
-Python comes with a fairly mature unit testing framework [`unittest`](https://docs.python.org/3/library/unittest.html) that should be used. There are a number of different test runners available:
+Python comes with a fairly mature unit testing framework [`unittest`](https://docs.python.org/3/library/unittest.html). However the standard `unittest` framework is limited in features.
 
-- nose2 (successor of `nose` which isn't developed anymore)
-- pytest
-- various test runners included in frameworks
+That's why every project should use [`pytest`](https://docs.pytest.org/en/latest/) framework to write and run tests.
 
-Tests should be based on `unittest` and every project should prefer using `pytest` as runner.
+Pytests comes with the following features that should be used:
+
+  - Fixtures: reusable setup/teardown code for tests (e.g. for mocking resources)
+  - Markers: categorize tests by feature or priority
+  - Parametrization: run the same test with different inputs
 
 ## 9. Observablity - Logging
 

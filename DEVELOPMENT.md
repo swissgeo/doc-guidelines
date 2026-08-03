@@ -29,9 +29,17 @@ The following topics are covered:
 
 ## 2. Coding style
 
-Some guidelines that are generic to all languages are noted here. Language specific things can be found in this page, see below. Language specific guidelines can be found here [Coding Guidelines](README.md)
+Some guidelines that are generic to all languages are noted in this chapter. Language specific guidelines can be found on the following mardown files:
 
-> [!NOTE]
+- [Coding Guidelines - Python](PYTHON.md)
+- [Coding Guidelines - JavaScript](JAVASCRIPT.md)
+- [Coding Guidelines - Ansible](ANSIBLE.md)
+- [Coding Guidelines - Bash](BASH.md)
+- [Coding Guidelines - Docker](DOCKER.md)
+- [Coding Guidelines - Golang](GO.md)
+- [Coding Guidelines - Terraform](TERRAFORM.md)
+
+> [!IMPORTANT]
 > Keep in mind that most of the time is spent **reading** code (not writing), yours or from someone else. Hence try to make life easier for the one **reading** and trying to understand your code.
 
 ### Fail-Fast

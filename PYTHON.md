@@ -24,7 +24,7 @@ There are a number of style guides out there. If in doubt, check what [google](h
 - [7. Error handling - Rules of Thumb](#7-error-handling---rules-of-thumb)
 - [8. Introduce Explaining Variable](#8-introduce-explaining-variable)
 - [9. Unit Testing frameworks](#9-unit-testing-frameworks)
-- [10. Observablity - Logging](#10-observablity---logging)
+- [10. Observability - Logging](#10-observability---logging)
   - [Logger](#logger)
   - [OTEL LoggerProvider](#otel-loggerprovider)
   - [Configuration](#configuration)

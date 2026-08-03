@@ -71,7 +71,7 @@ We use remote state management using AWS S3 backend
 
 #### State key
 
-We use the terraform root module path as state key in S3 prefixed with a version string `v2` and suffixed with `.tfstate`; e.g. `v2/aws/swisstopo-swissgeo/prod/systems/wwww/ingress.tfstate`
+We use the terraform root module path as state key in S3 prefixed with a version string `v2` and suffixed with `.tfstate`; e.g. `v2/aws/swisstopo-swissgeo/prod/systems/www/ingress.tfstate`
 
 The version prefix is to avoid any risk of key collision in the future in case of code structure re-organization.
 

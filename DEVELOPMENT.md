@@ -82,7 +82,7 @@ Testing is an integral part of development and mandatory for production-targeted
 
 The first two are automated tests, the third one obviously manual. Language specific details about testing can be found here:
 
-- [python](PYTHON.md#8-unit-testing-frameworks)
+- [python](PYTHON.md#9-unit-testing-frameworks)
 - [bash](BASH.md#4-unit-tests--shellspec)
 - [javascript](JAVASCRIPT.md#testing)
 

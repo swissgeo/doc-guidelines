@@ -653,8 +653,8 @@ Every service should implement OTEL Tracing, see [Opentelemetry Tracing](https:/
 
 ## 12. Observability - Metrics
 
-Opentelementry instrumentation usually allready implement most important metrics. However if the service
-require other metrics, they should be implemented with [Opentelementry Metrics](https://opentelemetry.io/docs/languages/python/instrumentation/#metrics). Any new metrics must follow the OTEL [semantic convention](https://opentelemetry.io/docs/specs/semconv/).
+OpenTelemetry instrumentation usually already implements most important metrics. However if the service
+requires other metrics, they should be implemented with [OpenTelemetry Metrics](https://opentelemetry.io/docs/languages/python/instrumentation/#metrics). Any new metrics must follow the OTEL [semantic convention](https://opentelemetry.io/docs/specs/semconv/).
 
 ## 13. Observability - local stack
 

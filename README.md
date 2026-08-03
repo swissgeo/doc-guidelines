@@ -1,10 +1,10 @@
 # doc-guidelines
 
-Geoadmin PP BGDI general and coding guidelines.
+SWISSGEO general and coding guidelines.
 
 ## Table of Content
 
-1. Coding guidelines (#coding-guidelines)
+1. Coding guidelines
    1. [General development](DEVELOPMENT.md)
    2. [Ansible](ANSIBLE.md)
    3. [Bash](BASH.md)

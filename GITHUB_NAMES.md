@@ -31,10 +31,6 @@ Handler and worker
 
 Libraries
 
-### mf-
-
-Mapfish Framework applications
-
 ### service-
 
 Services
@@ -51,7 +47,7 @@ Web applications and pages
 
 projects related with infrastructure
 
-In addition to the prefix the following pattern should be followed: `infra-[technology/type]-[project/aws-account]` (eg. `infra-terraform-bgdi-dev`)
+In addition to the prefix the following pattern should be followed: `infra-[technology/type]-[project/aws-account]` (eg. `infra-terraform`)
 
 ### suite-
 

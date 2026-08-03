@@ -28,7 +28,7 @@ Each service or productive piece of software should be automatically tested, bef
 | Branch | Status |
 |--------|-----------|
 | develop | ![Build Status](BADGE_LINK) |
-| master | ![Build Status](BADGE_LINK) |
+| main | ![Build Status](BADGE_LINK) |
 ```
 
 To get the badge see [Access your AWS CodeBuild build badges](https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-badges.html#access-badges).

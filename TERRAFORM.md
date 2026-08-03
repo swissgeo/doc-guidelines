@@ -116,7 +116,7 @@ Use modules to encapsulate and reuse configurations. This promotes DRY (Don't Re
 
 ### Code generation via Terramate
 
-In order to keep code DRY, use Terramate code generation for repetitive taks, e.g. like terraform
+In order to keep code DRY, use Terramate code generation for repetitive tasks, e.g. like terraform
 backend definitions or terraform provider definitions.
 
 ## Development Guidelines

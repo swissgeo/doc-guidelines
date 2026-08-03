@@ -565,7 +565,7 @@ Pytests comes with the following features that should be used:
   - Markers: categorize tests by feature or priority
   - Parametrization: run the same test with different inputs
 
-## 10. Observablity - Logging
+## 10. Observability - Logging
 
 Python comes with a good logging framework that we should use for logging. For development all log messages should be printed to stdout in a human-readable format.
 

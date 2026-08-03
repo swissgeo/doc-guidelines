@@ -14,7 +14,9 @@ The following topics are covered:
   - [Metrics](#metrics)
 - [3. Testing](#3-testing)
   - [Unit Tests](#unit-tests)
-  - [Integration/End-to-End Tests](#integrationend-to-end-tests)
+  - [Application Tests](#application-tests)
+  - [System/Application E2E Tests](#systemapplication-e2e-tests)
+  - [System/Application Load and Performance Tests](#systemapplication-load-and-performance-tests)
   - [Manual Tests](#manual-tests)
 
 ## 1. Version Control of Sources
@@ -82,13 +84,21 @@ Each service should use OpenTelemetry metrics to collect and report metrics abou
 
 ## 3. Testing
 
-Testing is an integral part of development and mandatory for production-targeted code. This applies to apps as well as scripts. We distinguish three categories of tests:
+Testing is an integral part of development and mandatory for production-targeted code. This applies to apps as well as scripts. We distinguish the following categories of tests:
 
-- unit tests
-- integration/end-to-end tests
-- manual tests
+| Level | Term | Scope | Mandatory | Lifecycle | Automated | Description | Typical tools |
+| ----- | ---- | ----- | --------- | --------- | ----------- | ------------- |
+| 1 | Unit Tests | Individual functions, classes, objects | :white_check_mark: | PR | :white_check_mark: |Simple and small tests, should be used extensively | Vitest, pytest, go test, ... |
+| 2 | Component Tests | A single UI component, a software component in isolation | :no_entry_sign: | PR | :white_check_mark: |Optional test category mostly used in frontend application. | Playwrith Component Testing, Cypress Component Testing |
+| 3 | Application Tests | An entire application in isolation | :white_check_mark: | PR | :white_check_mark: |Testing a full application in isolation, meaning any external application involvment should be mocked. | Playwrith e2e Testing, Cypress e2e Testing, django test client, fastapi test client |
+| 4 | Application E2E Tests | Testing Application deployment | :white_check_mark: | Deployment/Daily | :white_check_mark: | Testing the full application deployment without mocking | Pytest, Pytest playwright |
+| 5 | System Integration E2E Tests | Testing a whole system deployment | :no_entry_sign: | Deployment/Daily | :white_check_mark: | Testing a whole system deployment. System are consistent on several application interaction. | Pytest, Pytest playwright |
+| 6 | Performance Application Tests | Application deployment | :no_entry_sign: | On demand/manual | :no_entry_sign: | Testing the performance of an application under normal load, how quick are API calls under normal load | k6 |
+| 7 | Load Application Tests | Application deployment | :no_entry_sign: | On demand/manual | :no_entry_sign: | Testing the application performance and behavior under high load |
+| 8 | Load System Tests | System deployment | :no_entry_sign: | On demand/manual | :no_entry_sign: | Testing the whole system performance and behavior under high load. A system is the interaction of several applications.  |
+| 9 | Manual Tests | System and/or application deployment | :no_entry_sign: | On demand/manual | :no_entry_sign: | Those should only be used when automated test are too complex or would require a big effort to automate | Manual scripts |
 
-The first two are automated tests, the third one obviously manual. Language specific details about testing can be found here:
+Language specific details about testing can be found here:
 
 - [python](PYTHON.md#9-unit-testing-frameworks)
 - [bash](BASH.md#4-unit-tests--shellspec)
@@ -98,9 +108,17 @@ The first two are automated tests, the third one obviously manual. Language spec
 
 Unit Tests can be performed before a docker image is built using a dedicated test runner for Unit tests. Unit Tests furthermore don't require external resources. If useful, external resources can be mocked in Unit Tests. Target code coverage for Unit Tests should be above 70%.
 
-### Integration/End-to-End Tests
+### Application Tests
 
-Integration/End-to-End tests are performed with the built docker image and have access to external resources. Integration tests should make sure that the newly built version works well together with the existing data and other services. Integration tests should use staging (or integration) environment and not production resources.
+Application tests are performed with the built docker image and all external resources must be mocked. They should make sure that the newly built version works well with all its internal dependencies, and that it can start properly.
+
+### System/Application E2E Tests
+
+System/Application E2E tests are performed with the docker image deployed on a staging and have access to external resources. E2E tests should make sure that the newly built version works well together with the existing data and other services. Mutating E2E tests should not run on the `PROD` envronement but only on the `DEV` and `INT` environment.
+
+### System/Application Load and Performance Tests
+
+System/Application load and performance tests are performed with the docker image deployed on a staging and have access to external resources. Those tests should make sure that the newly built version performs well together with the existing data and other services under normal and high load. They should never run on `PROD` staging, and mostly only on `INT` with the same scaling as on `PROD`.
 
 ### Manual Tests
 

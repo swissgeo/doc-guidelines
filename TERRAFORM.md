@@ -76,7 +76,7 @@ We use the terraform root module path as state key in S3 prefixed with a version
 The version prefix is to avoid any risk of key collision in the future in case of code structure re-organization.
 
 > [!NOTE]
-> We used to use an UUID as state keys, which has the advantage that we did not have to change the state when reorganizing resources. However it has the downside that UUID key were very hard to code review and error prone due to copy paste mistake not being easily identifiable.*
+> We used to use an UUID as state keys, which has the advantage that we did not have to change the state when reorganizing resources. However it has the downside that UUID key were very hard to code review and error prone due to copy paste mistake not being easily identifiable.
 
 ### State migration
 

@@ -559,7 +559,7 @@ Python comes with a fairly mature unit testing framework [`unittest`](https://do
 
 That's why every project should use [`pytest`](https://docs.pytest.org/en/latest/) framework to write and run tests.
 
-Pytests comes with the following features that should be used:
+Pytest comes with the following features that should be used:
 
   - Fixtures: reusable setup/teardown code for tests (e.g. for mocking resources)
   - Markers: categorize tests by feature or priority

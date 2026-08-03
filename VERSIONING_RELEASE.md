@@ -35,8 +35,6 @@ We use the SemVer with the `v` prefix; `vMAJOR.MINOR.PATCH`
 The git repository tagging and release is automated via github actions (see [.github/workflows/semver-release.yml](https://github.com/swissgeo/.github/blob/main/.github/workflows/semver-release.yml)).
 It should be noted explicitly that this action doesn't change the git history, i.e. it doesn't modify files (e.g. a `version` file) or add annotated tags.
 
-See also [Setting up SemVer Workflow](GITHUB_WORKFLOW.md#setting-up-semver-workflow).
-
 ### New SemVer Beta Version
 
 Beta versions are automatically done on every push to `develop`. A beta version has the following form: `NEXT_VERSION-beta.X` where `NEXT_VERSION` is the next semVer version (last version with `MINOR` incremented by one, e.g. `v1.2.0`) and `X` an incremental number.

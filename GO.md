@@ -1,4 +1,36 @@
-# Versioning
+# Golang
+
+- [Coding guidelines](#coding-guidelines)
+  - [Formatting](#formatting)
+  - [Linting](#linting)
+- [Versioning](#versioning)
+  - [Implementation details](#implementation-details)
+
+## Coding guidelines
+
+### Formatting
+
+All code must be formatted using the official Golang formatter `goimport` (which does `gofmt` but also sort and manage imports):
+
+```bash
+goimports -w .
+```
+
+### Linting
+
+Every code should be linted using the following two tools:
+
+```bash
+golangci-lint run
+```
+
+And
+
+```bash
+govulncheck -show verbose ./...
+```
+
+## Versioning
 
 The Go version to use for each module is specified with the [`go` directive of
 the `go.mod` file](https://go.dev/doc/modules/gomod-ref#go).
@@ -15,7 +47,7 @@ You can programmatically retrieve that version number with `goenv`:
 GOENV_GOMOD_VERSION_ENABLE=1 goenv local
 ```
 
-## Implementation details
+### Implementation details
 
 If you are interested in the details of how the CI handles this, please refer
 to [`golang_install.sh`](https://github.com/swissgeo/infra-terraform/blob/main/scripts/codebuild/golang_install.sh)

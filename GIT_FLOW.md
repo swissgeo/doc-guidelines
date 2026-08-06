@@ -112,14 +112,14 @@ This branch must then follow these rules:
     - WIP PRs, those MUST be created as draft PRs
 - A PR should be of **production** quality
 - A PR has a proper title. The title MUST contain the JIRA related ticket number if any (`PB-9999: ...`).
-  - When the PR is not associated with a JIRA ticket, the title MUST start with the `CHORE: ` prefix. Only small PRs are allowed to have no JIRA ticket associated with them (e.g. updated README, small maintenance work).
+  - When the PR is not associated with a JIRA ticket, the title MUST start with the `chore: ` prefix. Only small PRs are allowed to have no JIRA ticket associated with them (e.g. updated README, small maintenance work).
 - A PR Title should reflect the changes and be written in past tense. Title is used to generate the Release Note !
 - A PR is only assigned for review when it's **finished** and not WIP anymore, all commits must be **ready** for review (see below)
 - A PR contains atomic and well named commits:
   - Each commit should have a comment in the following forms
 
     ```text
-    <jira-issue-id>|CHORE: Title (should not be more than 100 chars)
+    <jira-issue-id>|chore: Title (should not be more than 100 chars)
 
     Description of the issue being fixed by the commit. Eventually how the issue could be reproduced.
 

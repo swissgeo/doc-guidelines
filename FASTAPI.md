@@ -40,7 +40,7 @@ service-name/
 │   │   ├── __init__.py
 │   │   ├── db.py                # DB client/session dependency + (de)serialization helpers
 │   │   ├── exceptions.py        # Centralized exception handlers
-│   │   └── <feature>_service.py # Business/service layer, injected into routes via Depends
+│   │   └── <feature>_service.py # Business/service layer, injected into routes via fastapi.Depends
 │   ├── models/                  # DB models/ORM (e.g. SQLAlchemy ORM models, DynamoDB items)
 │   │   ├── __init__.py
 │   │   └── <feature>.py
@@ -57,13 +57,12 @@ service-name/
 │       └── test_*.py
 ├── .env.default                 # Default, non-secret env values, committed to the repo
 ├── .pre-commit-config.yaml      # Runs `make lint` before each commit
-├── .python-version
+├── .python-version              # pinned python major and minor version for local development
 ├── Dockerfile                   # Multi-stage: base -> builder (uv) -> production (non-root)
 ├── docker-compose.yml           # Local dependencies (e.g. moto, otel-collector, jaeger)
 ├── Makefile                     # setup, lint, format, test, serve, dockerbuild, ...
 ├── pyproject.toml               # uv project + ruff + ty + pytest + coverage configuration
-├── README.md
-└── uv.lock
+└── README.md
 ```
 
 ### Folder responsibilities
@@ -71,8 +70,7 @@ service-name/
 - **`app/api`**: HTTP layer only. Routers parse/validate input (via schemas), call into
   `app/core` services, and translate results/errors into responses. No business logic here.
 - **`app/core`**: App-wide configuration, business/service logic, and infrastructure clients
-  (database, external APIs). Services are plain classes/functions exposed as dependencies
-  (`XxxServiceDep`) so they can be swapped/mocked in tests.
+  (database, external APIs). Services are plain classes exposed as dependencies (`XxxServiceDep`) that auto-inject service instances into route handlers, enabling easy swapping/mocking in tests.
 - **`app/models`**: Database models/ORM definitions only — e.g. SQLAlchemy ORM models for a
   relational database, or the models representing DynamoDB items. No business logic.
 - **`app/schemas`**: Pydantic models only — API request and response bodies. No business logic.
@@ -80,9 +78,8 @@ service-name/
 - **`app/tests`**: Mirrors the rest of `app/` with `test_*.py` files; shared fixtures live in
   `conftest.py`.
 
-Keep one module per feature/resource in `api/`, `core/`, `models/` and `schemas/` (e.g.
-`state.py` in all four) rather than a single catch-all file, so the layers stay easy to navigate
-together.
+Keep one module per feature/resource in `api/`, `core/`, `models/`, and `schemas/` (e.g.
+`state.py` in all four) rather than a single catch-all file, so the structure is easy to understand and intuitive.
 
 ## 2. Settings
 
@@ -155,8 +152,7 @@ This keeps signatures short, makes dependencies easy to override in tests
   [Project structure](#1-project-structure)).
 - Use `Field(description=..., examples=[...])` on every field — this directly improves the
   generated OpenAPI docs.
-- Python code stays `snake_case`; client-facing JSON fields that need `camelCase` use
-  `Field(alias=...)`, and endpoints returning them set `response_model_by_alias=True`.
+- Sometimes JSON field names need to be in `camelCase` which conflicts with the Python dictionary key naming conventions (`snake_case`). To work around that, use `Field(alias=...)`, and endpoints returning them set `response_model_by_alias=True`.
 - Share a single `ErrorResponse` schema (`app/schemas/errors.py`) across all error responses for
   consistency.
 
@@ -170,7 +166,7 @@ This keeps signatures short, makes dependencies easy to override in tests
   `/openapi.json` (`/docs`, `/redoc`) excluding internal-tagged routes, and a separate
   `/internal/openapi.json` (`/internal/docs`, `/internal/redoc`) for the internal ones, as done in
   `app/openapi.py`.
-- Only publish the spec when explicitly enabled (`publish_openapi_spec` setting), off by default.
+- The OpenAPI specs are not published by default, you need to explicitly enable them through the `publish_openapi_spec` setting.
 
 ## 7. Versioning
 
@@ -204,20 +200,20 @@ are excluded via `UV_NO_DEV=1`.
 
 - `pytest` + `pytest-asyncio` + `pytest-cov` + `pytest-xdist`, run through `make test` /
   `make test-ci`.
-- Shared fixtures live in `app/tests/conftest.py`: a `client` fixture (`TestClient`) built from an
-  `app` fixture that imports `app.main.app` *after* settings are mocked, plus a `settings` fixture
-  overriding environment-dependent values (endpoints, region, ...).
+- Shared fixtures live in `app/tests/conftest.py`:
+   - A fixture of the FastAPI application with mocked settings
+   - A fixture of the applications settings overriding environment-dependent values
 - Mock external dependencies at the FastAPI dependency boundary with
   `app.dependency_overrides[get_xxx] = lambda: mock`, rather than monkeypatching internals.
-- Prefer exercising a real (but local/ephemeral) backend over mocking library internals when
-  practical — e.g. a dedicated per-test server (such as a `moto` `ThreadedMotoServer` on a random
-  port) instead of a global mock decorator, for proper test isolation under concurrent/async
-  execution.
+- For AWS dependencies, prefer a per-test `ThreadedMotoServer` on a random port over mocking the
+  library internals. This avoids having to maintain mocks for the AWS SDK and keeps tests closer
+  to real-world usage, since they exercise the AWS SDK directly. For edge cases (e.g. simulating
+  an aioboto3 failure), mocking library internals may still be necessary.
 
 ## 10. Observability
 
 Structured logging, tracing and metrics conventions are covered in
-[PYTHON.md](PYTHON.md#10-observability---logging) — FastAPI services additionally:
+[PYTHON.md](PYTHON.md#10-observability---logging) — for FastAPI services, additionally take into account:
 
 - Initialize/shut down OpenTelemetry instrumentation from a dedicated `app/otel.py`, called from
   `main.py`'s startup and the `lifespan` shutdown block.

@@ -63,19 +63,20 @@ The main branch is `main` and the branch for development is `develop`.
 
 ### Personal branches naming convention
 
-The naming convention below is important for the github actions to work properly !
+The naming convention below is used by a GitHub Action to automate PR labeling.
 
 | Branch | Description |
 |--------|-------------|
-| `data-JIRA-*` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` ticket number and optionally a very short title at the end. This branch contains data integration related work. |
-| `feat-JIRA-*`, `feature-JIRA-*` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` ticket number and optionally a very short title at the end. This branch contains non data integration related work that should be done for the next release. |
-| `bug-JIRA-*`, `bugfix-JIRA-*` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` ticket number and optionally a very short title at the end. This branch contains bugfix related work that should be done for the next release. |
-| `hotfix-JIRA-*` | Personal branch to be merged by PR directly into `main` and will be deployed as hot fix. Note here the JIRA ticket might be optional if there is no JIRA ticket related to the bug fix. |
+| `data-JIRA-SUMMARY`, `data/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` issue ID (i.e. `GPS-9999`) and optionally a very short title at the end. This branch contains data integration related work. |
+| `feat-JIRA-SUMMARY`, `feature-JIRA-SUMMARY`, `feat/JIRA/SUMMARY`, `feature/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` issue ID and optionally a very short title at the end. This branch contains non data integration related work that should be done for the next release. |
+| `bug-JIRA-SUMMARY`, `bugfix-JIRA-SUMMARY`, `bug/JIRA/SUMMARY`, `bugfix/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` issue ID and optionally a very short title at the end. This branch contains bugfix related work that should be done for the next release. |
+| `hotfix-JIRA-SUMMARY`, `hotfix/JIRA/SUMMARY` | Personal branch to be merged by PR directly into `main` and will be deployed as hot fix. Note here the JIRA issue ID might be optional if there is no JIRA ticket related to the bug fix. |
+| `chore-SUMMARY`, `chore/SUMMARY` | Personal branch for small maintenance work that is not associated with a JIRA ticket, to be merged by PR into `develop`. |
 
 > [!NOTE]
 > - **Prefix in branch names are important in order to set the correct PR label for release note categorization!**
-> - **JIRA ticket number in branch is important in order to link the branch to the JIRA ticket !**
-> - **Git commit should also have the JIRA ticket number in the title for the linking !**
+> - **JIRA issue ID in branch is important in order to link the branch to the JIRA ticket !**
+> - **Git commit should also have the JIRA issue ID in the title for the linking !**
 
 ## Long term development: `develop-DESCRIPTION`
 
@@ -111,15 +112,28 @@ This branch must then follow these rules:
     - PRs for RFC (see [PR for Request For Comment (RFC)](#pr-for-request-for-comment-rfc))
     - WIP PRs, those MUST be created as draft PRs
 - A PR should be of **production** quality
-- A PR has a proper title. The title MUST contain the JIRA related ticket number if any (`PB-9999: ...`).
-  - When the PR is not associated with a JIRA ticket, the title MUST start with the `chore: ` prefix. Only small PRs are allowed to have no JIRA ticket associated with them (e.g. updated README, small maintenance work).
-- A PR Title should reflect the changes and be written in past tense. Title is used to generate the Release Note !
+- By default, the PR title and every commit title MUST reference the related JIRA ticket using the following format:
+
+  ```text
+  <JIRA-ISSUE-ID>: <SUMMARY>
+  ```
+
+  For example: `PB-9999: Added dataset validation`.
+- As an exception, small changes that are not tracked by JIRA MAY use the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format for both PR and commit titles:
+
+  ```text
+  <type>(<optional-scope>): <summary>
+  ```
+
+  The supported types are `fix`, `chore`, `feat`, `docs`, and `revert`. Extensive work MUST be tracked by JIRA and use the default `<JIRA-ISSUE-ID>: <SUMMARY>` format.
+- PR and commit titles should reflect the changes, be written in the past tense, and not exceed 100 characters. The PR title is used to generate the release notes.
+- A PR description MUST NOT be empty.
 - A PR is only assigned for review when it's **finished** and not WIP anymore, all commits must be **ready** for review (see below)
 - A PR contains atomic and well named commits:
-  - Each commit should have a comment in the following forms
+  - Each JIRA-related commit should use the following form:
 
     ```text
-    <jira-issue-id>|chore: Title (should not be more than 100 chars)
+    <JIRA-ISSUE-ID>: <SUMMARY>
 
     Description of the issue being fixed by the commit. Eventually how the issue could be reproduced.
 

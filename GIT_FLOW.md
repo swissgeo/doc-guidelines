@@ -67,16 +67,16 @@ The naming convention below is used by a GitHub Action to automate PR labeling.
 
 | Branch | Description |
 |--------|-------------|
-| `data-JIRA-SUMMARY`, `data/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` ticket number and optionally a very short title at the end. This branch contains data integration related work. |
-| `feat-JIRA-SUMMARY`, `feature-JIRA-SUMMARY`, `feat/JIRA/SUMMARY`, `feature/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` ticket number and optionally a very short title at the end. This branch contains non data integration related work that should be done for the next release. |
-| `bug-JIRA-SUMMARY`, `bugfix-JIRA-SUMMARY`, `bug/JIRA/SUMMARY`, `bugfix/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` ticket number and optionally a very short title at the end. This branch contains bugfix related work that should be done for the next release. |
-| `hotfix-JIRA-SUMMARY`, `hotfix/JIRA/SUMMARY` | Personal branch to be merged by PR directly into `main` and will be deployed as hot fix. Note here the JIRA ticket might be optional if there is no JIRA ticket related to the bug fix. |
+| `data-JIRA-SUMMARY`, `data/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` issue ID (i.e. `GPS-9999`) and optionally a very short title at the end. This branch contains data integration related work. |
+| `feat-JIRA-SUMMARY`, `feature-JIRA-SUMMARY`, `feat/JIRA/SUMMARY`, `feature/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` issue ID and optionally a very short title at the end. This branch contains non data integration related work that should be done for the next release. |
+| `bug-JIRA-SUMMARY`, `bugfix-JIRA-SUMMARY`, `bug/JIRA/SUMMARY`, `bugfix/JIRA/SUMMARY` | Personal branch to be merged by PR into `develop`. This branch SHOULD have a `JIRA` issue ID and optionally a very short title at the end. This branch contains bugfix related work that should be done for the next release. |
+| `hotfix-JIRA-SUMMARY`, `hotfix/JIRA/SUMMARY` | Personal branch to be merged by PR directly into `main` and will be deployed as hot fix. Note here the JIRA issue ID might be optional if there is no JIRA ticket related to the bug fix. |
 | `chore-SUMMARY`, `chore/SUMMARY` | Personal branch for small maintenance work that is not associated with a JIRA ticket, to be merged by PR into `develop`. |
 
 > [!NOTE]
 > - **Prefix in branch names are important in order to set the correct PR label for release note categorization!**
-> - **JIRA ticket number in branch is important in order to link the branch to the JIRA ticket !**
-> - **Git commit should also have the JIRA ticket number in the title for the linking !**
+> - **JIRA issue ID in branch is important in order to link the branch to the JIRA ticket !**
+> - **Git commit should also have the JIRA issue ID in the title for the linking !**
 
 ## Long term development: `develop-DESCRIPTION`
 

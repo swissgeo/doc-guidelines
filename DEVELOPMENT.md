@@ -88,9 +88,9 @@ Testing is an integral part of development and mandatory for production-targeted
 
 | Level | Term | Scope | Mandatory | Lifecycle | Automated | Description | Typical tools |
 | ----- | ---- | ----- | --------- | --------- | --------- | ----------- | ------------- |
-| 1 | Unit Tests | Individual functions, classes, objects | :white_check_mark: | PR | :white_check_mark: | Simple, small and fast tests that should be used extensively | Vitest, pytest, go test, ... |
-| 2 | Integration Tests | Multiple components/modules together | :white_check_mark: | PR | :white_check_mark: | Testing multiple components/modules together — for example a UI component, a software component in isolation, or an entire application in isolation (using test clients and mocking) | Playwright component/e2e tests, Cypress component/e2e tests, Django test client, FastAPI test client |
-| 3 | E2E Tests | Application deployment | :white_check_mark: | Deployment/Daily | :white_check_mark: | Testing the full application deployment without any mocking | pytest, pytest-playwright |
+| 1 | Unit Tests | Individual functions, classes, objects, ui components, ... | :white_check_mark: | PR | :white_check_mark: | Simple, small and fast tests that should be used extensively | Vitest, pytest, go test, ... |
+| 2 | Integration Tests | Test application in a sandbox | :white_check_mark: | PR | :white_check_mark: | Testing an application in a sandbox environment (not an actual application deployment, with all external dependencies mocked). E.g. testing a backend service endpoint using a test client, or a frontend application using a local test deployment. | Playwright e2e tests, Cypress e2e tests, Django test client, FastAPI test client |
+| 3 | E2E Tests | Application deployment test | :white_check_mark: | Deployment/Daily | :white_check_mark: | Testing the full application deployment without any mocking | pytest, pytest-playwright |
 | 4 | System Integration Tests | Whole system, across multiple services/applications | :no_entry_sign: | Deployment/Daily | :white_check_mark: | Testing a whole system deployment; verifies consistent behavior when multiple applications interact (e.g. an action in application A produces the expected result in application B) | pytest, pytest-playwright |
 | 5 | Load and Performance Tests | System/application deployment | :no_entry_sign: | On demand/manual | :no_entry_sign: | Throughput and robustness tests on application- or system-level | k6 |
 | 6 | Manual Tests | System/application deployment | :no_entry_sign: | On demand/manual | :no_entry_sign: | Manual testing; should only be used when automated tests are too complex or would require significant effort to automate | Manual scripts or manual interaction (e.g. GUI interaction) |
@@ -103,29 +103,33 @@ Language specific details about testing can be found here:
 
 ### 1. Unit Tests
 
-Unit Tests can be performed before the docker image is built, using a dedicated test runner. They don't require external resources, though external resources can be mocked when useful. Target code coverage for Unit Tests should be above 70%.
+Unit Tests can be performed with a dedicated test runner before the Docker image is built. They do not require external resources, though such resources can be mocked when useful. Target code coverage for Unit Tests should be above 70%.
 
 ### 2. Integration Tests
 
-Integration Tests verify that multiple components/modules work correctly together — for example a UI component, an individual software
-component, or an entire application tested in isolation using test clients and mocking (e.g. Playwright/Cypress component tests, or
-the Django/FastAPI test client). They run automatically as part of the PR pipeline, before the docker image is built, and all external
-resources must be mocked.
+Integration Tests are application acceptance tests. They verify that an isolated application works as expected with all external dependencies mocked. They can run against the final application bundle (e.g. a Docker image or frontend bundle) deployed in a sandbox environment such as CI, or they can use test clients such as the FastAPI test client. They run automatically as part of the PR pipeline before the application bundle is pushed (e.g. before a Docker image is pushed to Amazon ECR). All external resources must be mocked.
 
 ### 3. E2E Tests
 
-E2E Tests are performed against the docker image deployed to a staging environment, which has access to external resources. They should make sure that the newly built version works well together with the existing data and other services. Mutating E2E Tests must not run on the `PROD` environment, only on the `DEV` and `INT` environments.
+E2E Tests are performed against a Docker image deployed to a staging environment with access to external resources. They should verify that the newly built version works correctly with existing data and other dependent services.
+
+> [!IMPORTANT]
+> Mutating E2E Tests MUST NOT run in the `PROD` environment; they may run only in the `DEV` and `INT` environments.
 
 ### 4. System Integration Tests
 
-System Integration Tests are similar to E2E Tests, but involve multiple applications/services in the same test. For example, a test might use application A to trigger a behavior and then verify it in application B. E2E Tests, in contrast, only act on a single application — even though that application may rely on others behind the scenes, the test itself exercises only one.
+System Integration Tests are similar to E2E Tests but involve multiple applications or services in the same test. For example, a test might use application A to trigger a behavior and then verify it in application B. In contrast, E2E Tests act on a single application. Although that application may rely on others behind the scenes, the test itself exercises only one.
 
-As with E2E Tests, System Integration Tests are performed against deployed applications in all staging environments, and mutating tests must not run on the `PROD` environment, only on the `DEV` and `INT` environments.
+> [!IMPORTANT]
+> As with E2E Tests, System Integration Tests are performed against deployed applications in all staging environments. Mutating tests MUST NOT run in the `PROD` environment; they may run only in the `DEV` and `INT` environments.
 
 ### 5. Load and Performance Tests
 
-Load and Performance Tests are performed against the docker image deployed to a staging environment, which has access to external resources. They should make sure that the newly built version performs well together with the existing data and other services under normal and high load. They must never run on the `PROD` environment, and should mostly only run on `INT` with scaling comparable to `PROD`.
+Load and Performance Tests are performed against a Docker image deployed to a staging environment with access to external resources. They should verify that the newly built version performs well with existing data and other services under normal and high loads.
+
+> [!IMPORTANT]
+> They MUST NEVER run in the `PROD` environment and should generally run only in `INT`, with scaling comparable to `PROD`.
 
 ### 6. Manual Tests
 
-Manual Tests should be performed after major deploys, directly on `PROD`, to verify that the deployment was successful. They are not always required and should be automated whenever possible.
+Manual Tests should be performed directly in `PROD` after major deployments to verify that the deployment was successful. They are not always required and should be automated whenever possible.
